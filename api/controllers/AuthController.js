@@ -8,7 +8,9 @@ module.exports = {
         const userData = req.body;
 
         //check if this email exists
-        User.findOne({ email: userData.email }, (err, user) => {
+        User.findOne({
+            email: userData.email
+        }, (err, user) => {
             if (err || user) {
                 res.sendStatus(400);
                 return;
@@ -54,7 +56,9 @@ module.exports = {
 
             user.verified = true;
 
-            User.update({ _id: id }, user, (err, verifiedUser) => {
+            User.update({
+                _id: id
+            }, user, (err, verifiedUser) => {
                 res.sendStatus(200);
             });
         });
@@ -63,7 +67,9 @@ module.exports = {
     login: (req, res) => {
         const credentials = req.body;
 
-        User.findOne({ email: credentials.email }, (err, user) => {
+        User.findOne({
+            email: credentials.email
+        }, (err, user) => {
             if (err) {
                 res.send(err);
             }
@@ -78,22 +84,23 @@ module.exports = {
                 return;
             }
 
-            const payload = {id: user.id, email : user.email, firstName: user.first_name, lastName: user.last_name, roles: user.roles};
+            const payload = {
+                id: user.id,
+                email: user.email,
+                firstName: user.first_name,
+                lastName: user.last_name,
+                roles: user.roles
+            };
             const token = jwt.sign(payload, auth.jwtOptions.secretOrKey);
-            
-            res.json({message: 'ok', token: token});
+
+            res.json({
+                message: 'ok',
+                token: token
+            });
         });
     },
 
     logout: (req, res) => {
-
-    },
-
-    assignRole: (req, res) => {
-        
-    },
-
-    revokeRole: (req, res) => {
 
     }
 };

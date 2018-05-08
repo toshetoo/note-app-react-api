@@ -7,6 +7,17 @@ let UserRolesSchema = new Schema({
         type: String,
         required: 'Role name is required'
     },
+
+    canBeModified: {
+        type: Boolean,
+        default: true
+    },
+
+    canBeDeleted: {
+        type: Boolean,
+        default: true
+    },
+
     permissions: {
         type: [Schema.Types.ObjectId],
         default: []

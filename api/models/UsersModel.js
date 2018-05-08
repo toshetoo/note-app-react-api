@@ -5,11 +5,11 @@ const Schema = mongoose.Schema;
 let UserSchema = new Schema({
     firstName: {
         type: String,
-        required:  'First name is required.'
+        required: 'First name is required.'
     },
     lastName: {
         type: String,
-        required:  'Last name is required.'
+        required: 'Last name is required.'
     },
     email: {
         type: String,
@@ -17,12 +17,10 @@ let UserSchema = new Schema({
     },
     password: {
         salt: {
-            type: String,
-            required: 'Salt is required'
-        }, 
+            type: String
+        },
         hashedPassword: {
-            type: String,
-            required: 'Password is required'
+            type: String
         }
     },
     verified: {
@@ -46,7 +44,7 @@ let UserSchema = new Schema({
 
 UserSchema.method({
     authenticate: (password) => {
-      return encryption.generateHashedPassword(this.password.salt, password) === this.password.hashedPassword;
+        return encryption.generateHashedPassword(this.password.salt, password) === this.password.hashedPassword;
     }
 });
 
