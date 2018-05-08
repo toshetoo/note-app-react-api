@@ -7,7 +7,9 @@ const MailSender = require('../utils/MailSender');
 const seedPermissions = () => {
     // first check if any permissions have been already seeded
     Permission.find({}, (error, allPermissions) => {
+        const promises = [];
         const allDbPermissions = allPermissions || [];
+        const currentlyGeneratedPermissions = [];
 
         for (const controller of controllers) {
             // go around all controllers to extract their endpoints and map them with their name
@@ -31,12 +33,33 @@ const seedPermissions = () => {
                         forUser: controller.config[endpoint.name].forUser
                     };
 
-                    Permission.create(perm).then((p) => {
+                    promises.push(Permission.create(perm).then((p) => {
                         console.log(`Permission ${perm.name} created for controller ${perm.controller} with id ${p.id}`);
-                    });
+                        currentlyGeneratedPermissions.push(p);
+                    }));
+                } else {
+                    currentlyGeneratedPermissions.push(permissionExists);
                 }
             }
         }
+
+        // be sure that all permissions are saved
+        Promise.all(promises).then(() => {
+            // if the current ones are fewer than the saved in the db, we need to delete old unused perms
+            if (currentlyGeneratedPermissions.length < allDbPermissions.length) {
+                for (const perm of allDbPermissions) {
+                    const isFound = currentlyGeneratedPermissions.find(p => p.id === perm.id);
+
+                    if (!isFound) {
+                        Permission.deleteOne({
+                            _id: perm.id
+                        }, () => {
+                            console.log(`Permission ${perm.name} deleted as it is no longer used.`);
+                        });
+                    }
+                }
+            }
+        });
     });
 };
 
