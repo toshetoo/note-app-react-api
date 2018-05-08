@@ -1,8 +1,11 @@
 const express = require("express");
 const mongoose = require('mongoose');
+
 const NotesModel = require('./api/models/NotesModel');
-const UsersModel = require('./api/models/UsersModel');
 const UserRoleModel = require('./api/models/UserRolesModel');
+const Permission = require('./api/models/UserPermissionModel');
+const UsersModel = require('./api/models/UsersModel');
+
 const bodyParser = require('body-parser');
 const notesRoutes = require('./api/routes/NotesRoutes');
 const userRoutes = require('./api/routes/UserRoutes');
