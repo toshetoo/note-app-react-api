@@ -60,11 +60,15 @@ module.exports = {
         const userId = req.params.id;
 
         if (!req.files)
-            return res.status(400).send('No files were uploaded.');
+            return res.status(400).json({
+                message: 'No files were uploaded.'
+            });
 
         User.findById(userId, (err, user) => {
             if (err)
-                return res.status(400);
+                return res.status(400).json({
+                    message: 'User does not exist'
+                });
 
             const userFile = req.files.userImage;
 
@@ -88,8 +92,6 @@ module.exports = {
             });
         });
     },
-
-
 
     assignRole: (req, res) => {
 

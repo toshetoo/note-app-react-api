@@ -16,7 +16,10 @@ module.exports = {
             email: userData.email
         }, (err, user) => {
             if (err || user) {
-                res.sendStatus(400);
+                res.status(400).json({
+                    error: err,
+                    message: 'Email already exists'
+                });
                 return;
             }
 
@@ -54,7 +57,9 @@ module.exports = {
 
             // don't verify again
             if (user.verified) {
-                res.sendStatus(400);
+                res.status(400).json({
+                    message: 'Account already verified.'
+                });
                 return;
             }
 
@@ -79,12 +84,16 @@ module.exports = {
             }
 
             if (!user.verified) {
-                res.sendStatus(400);
+                res.status(400).json({
+                    message: 'Account is not verified.'
+                });
                 return;
             }
 
             if (!user.authenticate(credentials.password)) {
-                res.sendStatus(400);
+                res.status(400).json({
+                    message: 'Wrong username or password'
+                });
                 return;
             }
 
