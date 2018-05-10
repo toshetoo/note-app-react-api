@@ -17,9 +17,10 @@ const acl = require('./api/config/acl');
 
 app = express();
 port = process.env.PORT || 3000;
+dbString = process.env.MONGODB_URI;
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/NotesDB');
+mongoose.connect(dbString);
 
 app.use(bodyParser.urlencoded({
 	extended: true

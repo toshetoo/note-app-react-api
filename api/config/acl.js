@@ -172,9 +172,13 @@ const seedAdmin = () => {
 module.exports = {
     initialize: () => {
         seedPermissions().then(() => {
-            seedRoles().then(() => {
-                seedAdmin();
-            });
+            setTimeout(() => {
+                seedRoles().then(() => {
+                    setTimeout(() => {
+                        seedAdmin();
+                    }, 100);
+                });
+            }, 100);
         });
     },
 
