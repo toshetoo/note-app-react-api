@@ -53,7 +53,7 @@ app.use(function (req, res, next) {
 	next();
 });
 
-acl.initialize();
-
-app.listen(port);
-Logger.log('Server started on port ' + port);
+acl.initialize().then(() => {
+	app.listen(port);
+	Logger.log('Server started on port ' + port);
+});

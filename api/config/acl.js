@@ -141,7 +141,8 @@ const seedRoles = () => {
 };
 
 const seedAdmin = () => {
-    // check if admin user exists
+    return new Promise((resolve, reject) => {
+        // check if admin user exists
     User.findOne({
         email: 'admin@admin.com'
     }, (err, user) => {
@@ -164,22 +165,30 @@ const seedAdmin = () => {
                 User.create(adminUser).then((savedAdmin) => {
                     MailSender.sendRegistrationMail(savedAdmin);
                     Logger.log('Admin seeded');
+                    resolve();
                 });
             });
+        } else {
+            resolve();
         }
     });
+    })
 };
 
 module.exports = {
     initialize: () => {
-        seedPermissions().then(() => {
-            setTimeout(() => {
-                seedRoles().then(() => {
-                    setTimeout(() => {
-                        seedAdmin();
-                    }, 100);
-                });
-            }, 100);
+        return new Promise((resolve, reject) => {
+            seedPermissions().then(() => {
+                setTimeout(() => {
+                    seedRoles().then(() => {
+                        setTimeout(() => {
+                            seedAdmin().then(() => {
+                                resolve();
+                            });
+                        }, 100);
+                    });
+                }, 100);
+            });
         });
     },
 
