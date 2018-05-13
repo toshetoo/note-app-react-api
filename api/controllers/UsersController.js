@@ -121,7 +121,7 @@ module.exports = {
 
                 user.roles.push(data.roleId);
 
-                User.update({ _id: user.id }, (err, user) => {
+                User.update({ _id: user.id }, user, (err, user) => {
                     if (err)
                         res.send(err);
 
@@ -163,7 +163,7 @@ module.exports = {
                 const index = user.roles.findIndex(r => r.id === data.id);
                 user.roles.splice(index, 1);
 
-                User.update({ _id: user.id }, (err, user) => {
+                User.update({ _id: user.id }, user, (err, user) => {
                     if (err)
                         res.send(err);
 

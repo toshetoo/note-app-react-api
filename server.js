@@ -7,9 +7,12 @@ const Permission = require('./api/models/UserPermissionModel');
 const UsersModel = require('./api/models/UsersModel');
 
 const bodyParser = require('body-parser');
+
 const notesRoutes = require('./api/routes/NotesRoutes');
 const userRoutes = require('./api/routes/UserRoutes');
 const authRoutes = require('./api/routes/AuthRoutes');
+const rolesRoutes = require('./api/routes/RolesRoutes');
+
 const passportConfig = require('./api/config/passport');
 const passport = require('passport');
 const fileUpload = require('express-fileupload');

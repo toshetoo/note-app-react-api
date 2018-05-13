@@ -85,7 +85,7 @@ const seedRoles = () => {
                     role.permissions = allPermissions.map(p => p.id);
                     Role.update({
                         _id: role.id
-                    }, (err, updatedRole) => {
+                    }, role, (err, updatedRole) => {
                         console.log('Admin role updated');
                     });
                 } else {
@@ -114,7 +114,7 @@ const seedRoles = () => {
 
                     Role.update({
                         _id: role.id
-                    }, (err, updated) => {
+                    }, role, (err, updated) => {
                         console.log('User role updated');
                     });
                 } else {
