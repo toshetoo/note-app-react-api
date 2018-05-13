@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require('mongoose');
 
+const Log = require('./api/models/LogModel');
 const NotesModel = require('./api/models/NotesModel');
 const UserRoleModel = require('./api/models/UserRolesModel');
 const Permission = require('./api/models/UserPermissionModel');
@@ -17,6 +18,8 @@ const passportConfig = require('./api/config/passport');
 const passport = require('passport');
 const fileUpload = require('express-fileupload');
 const acl = require('./api/config/acl');
+
+const Logger = require('./api/utils/Logger');
 
 app = express();
 port = process.env.PORT || 3000;
@@ -53,4 +56,4 @@ app.use(function (req, res, next) {
 acl.initialize();
 
 app.listen(port);
-console.log('Server started on port ' + port);
+Logger.log('Server started on port ' + port);

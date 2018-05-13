@@ -1,4 +1,5 @@
 const mailer = require('nodemailer');
+const Logger = require('./Logger');
 
 const transporter = mailer.createTransport({
     service: 'gmail',
@@ -23,15 +24,15 @@ module.exports = {
           };
 
           //TODO remove this log
-          console.log(mailOptions.text);
+          Logger.log(mailOptions.text);
           
          transporter.sendMail(mailOptions, function(error, info){
             if (error) {
-              console.log(error);
+                Logger.log(error);
 
               errorCallback && errorCallback(error);
             } else {
-              console.log('Email sent: ' + info.response);
+                Logger.log('Email sent: ' + info.response);
 
               successCallback && successCallback(info);
             }

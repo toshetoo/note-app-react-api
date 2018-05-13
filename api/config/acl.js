@@ -3,11 +3,12 @@ const Permission = require('../models/UserPermissionModel');
 const User = require('../models/UsersModel');
 const controllers = require('../controllers/exporter');
 const MailSender = require('../utils/MailSender');
+const Logger = require('../utils/Logger');
 
 const encryption = require('../utils/encryption');
 
 const seedPermissions = () => {
-    console.log('Permission seed started.');
+    Logger.log('Permission seed started.');
     return new Promise((resolve, reject) => {
         // first check if any permissions have been already seeded
         Permission.find({}, (error, allPermissions) => {
@@ -38,7 +39,7 @@ const seedPermissions = () => {
                         };
 
                         promises.push(Permission.create(perm).then((p) => {
-                            console.log(`Permission ${perm.name} created for controller ${perm.controller} with id ${p.id}`);
+                            Logger.log(`Permission ${perm.name} created for controller ${perm.controller} with id ${p.id}`);
                             currentlyGeneratedPermissions.push(p);
                         }));
                     } else {
@@ -58,12 +59,12 @@ const seedPermissions = () => {
                             Permission.deleteOne({
                                 _id: perm.id
                             }, () => {
-                                console.log(`Permission ${perm.name} deleted as it is no longer used.`);
+                                Logger.log(`Permission ${perm.name} deleted as it is no longer used.`);
                             });
                         }
                     }
                 }
-                console.log('Permissions seed ended.');
+                Logger.log('Permissions seed ended.');
                 resolve();
             });
         });
@@ -71,7 +72,7 @@ const seedPermissions = () => {
 };
 
 const seedRoles = () => {
-    console.log('Roles seed started');
+    Logger.log('Roles seed started');
     return new Promise((resolve, reject) => {
         // first check if user and admin roles exist
         const promises = [];
@@ -86,7 +87,7 @@ const seedRoles = () => {
                     Role.update({
                         _id: role.id
                     }, role, (err, updatedRole) => {
-                        console.log('Admin role updated');
+                        Logger.log('Admin role updated');
                     });
                 } else {
                     const adminRole = {
@@ -97,7 +98,7 @@ const seedRoles = () => {
                     };
 
                     promises.push(Role.create(adminRole).then(() => {
-                        console.log('Admin role created');
+                        Logger.log('Admin role created');
                     }));
                 }
             });
@@ -115,7 +116,7 @@ const seedRoles = () => {
                     Role.update({
                         _id: role.id
                     }, role, (err, updated) => {
-                        console.log('User role updated');
+                        Logger.log('User role updated');
                     });
                 } else {
                     const userRole = {
@@ -126,14 +127,14 @@ const seedRoles = () => {
                     }
 
                     promises.push(Role.create(userRole).then(() => {
-                        console.log('User role created');
+                        Logger.log('User role created');
                     }));
                 }
             });
         });
 
         Promise.all(promises).then(() => {
-            console.log('Roles seed ended');
+            Logger.log('Roles seed ended');
             resolve();
         })
     });
@@ -162,7 +163,7 @@ const seedAdmin = () => {
 
                 User.create(adminUser).then((savedAdmin) => {
                     MailSender.sendRegistrationMail(savedAdmin);
-                    console.log('Admin seeded');
+                    Logger.log('Admin seeded');
                 });
             });
         }
