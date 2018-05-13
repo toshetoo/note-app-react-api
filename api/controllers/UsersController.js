@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
+const Role = mongoose.model('Role');
 
 module.exports = {
     getAll: (req, res) => {
@@ -94,11 +95,82 @@ module.exports = {
     },
 
     assignRole: (req, res) => {
+        const data = req.body;
+        Role.findById(data.roleId, (err, role) => {
+            if (err)
+                res.send(err);
 
+            if (!role) {
+                res.status(400).json({
+                    message: `Role with id ${data.roleId} does not exist.`
+                });
+            }
+
+            User.findById(data.userId, (err, user) => {
+                if (err)
+                    res.send(err);
+
+                if (!user) {
+                    res.status(400).json({
+                        message: `User with id ${data.user} does not exist.`
+                    });
+                }
+
+                if (!user.roles)
+                    user.roles = [];
+
+                user.roles.push(data.roleId);
+
+                User.update({ _id: user.id }, (err, user) => {
+                    if (err)
+                        res.send(err);
+
+                    res.sendStatus(200);
+                });
+
+            });
+        });
     },
 
     revokeRole: (req, res) => {
+        const data = req.body;
+        Role.findById(data.roleId, (err, role) => {
+            if (err)
+                res.send(err);
 
+            if (!role) {
+                res.status(400).json({
+                    message: `Role with id ${data.roleId} does not exist.`
+                });
+            }
+
+            User.findById(data.userId, (err, user) => {
+                if (err)
+                    res.send(err);
+
+                if (!user) {
+                    res.status(400).json({
+                        message: `User with id ${data.user} does not exist.`
+                    });
+                }
+
+                if (!user.roles.find(r => r.id === data.roleID)) {
+                    res.status(400).json({
+                        message: `User with id ${data.user} does not have role with id ${data.roleId}.`
+                    });
+                }
+
+                const index = user.roles.findIndex(r => r.id === data.id);
+                user.roles.splice(index, 1);
+
+                User.update({ _id: user.id }, (err, user) => {
+                    if (err)
+                        res.send(err);
+
+                    res.sendStatus(200);
+                });
+            });
+        });
     }
 };
 
