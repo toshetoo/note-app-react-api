@@ -9,6 +9,10 @@ const JwtStrategy = passportJWT.Strategy;
 const jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 jwtOptions.secretOrKey = guid();
+jwtOptions.ignoreExpiration = false;
+jwtOptions.jsonWebTokenOptions = {
+	expiresIn: '1d'
+};
 
 const strategy = new JwtStrategy(jwtOptions, (jwt_payload, next) => {
 	User.findById(jwt_payload.id, (err, user) => {
