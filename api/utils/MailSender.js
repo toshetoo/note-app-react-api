@@ -1,4 +1,5 @@
 const mailer = require('nodemailer');
+const Logger = require('./Logger');
 
 const transporter = mailer.createTransport({
     service: 'gmail',
@@ -11,30 +12,57 @@ const transporter = mailer.createTransport({
     }
 });
 
-module.exports = {   
+module.exports = {
     sendRegistrationMail: (user, successCallback, errorCallback) => {
         const mailOptions = {
             from: 'no-reply@note-manager.com',
             to: user.email,
             subject: 'Registration completed!',
             text: `
-                In order to verify your email, click on the following link: http://localhost:3000/auth/verify/${user.id}
+                In order to verify your email, click on the following link: https://personal-notes-api.herokuapp.com/auth/verify/${user.id}
             `
-          };
+        };
 
-          //TODO remove this log
-          console.log(mailOptions.text);
-          
-         transporter.sendMail(mailOptions, function(error, info){
+        //TODO remove this log
+        Logger.log(mailOptions.text);
+
+        transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-              console.log(error);
+                Logger.log(error);
 
-              errorCallback && errorCallback(error);
+                errorCallback && errorCallback(error);
             } else {
-              console.log('Email sent: ' + info.response);
+                Logger.log('Email sent: ' + info.response);
 
-              successCallback && successCallback(info);
+                successCallback && successCallback(info);
             }
-          });
+        });
+    },
+
+    sendResetPasswordMail: (user, successCallback, errorCallback) => {
+        const mailOptions = {
+            from: 'no-reply@note-manager.com',
+            to: user.email,
+            subject: 'Forgotten password',
+            text: `
+                Someone requested a new password for your account. Your password has been reset. 
+                In order to change it, click on the following link: https://personal-notes-api.herokuapp.com/auth/verify/${user.id}
+            `
+        };
+
+        //TODO remove this log
+        Logger.log(mailOptions.text);
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                Logger.log(error);
+
+                errorCallback && errorCallback(error);
+            } else {
+                Logger.log('Email sent: ' + info.response);
+
+                successCallback && successCallback(info);
+            }
+        });
     }
 }

@@ -15,5 +15,8 @@ module.exports = function (app) {
         }), AuthController.logout);
 
     app.route('/auth/verify/:id')
-        .get(AuthController.verify);
+        .post(AuthController.verify);
+
+    app.route('/auth/forgotten-password')
+        .post(AuthController.forgotternPassword);
 };

@@ -1,19 +1,25 @@
 const express = require("express");
 const mongoose = require('mongoose');
 
+const Log = require('./api/models/LogModel');
 const NotesModel = require('./api/models/NotesModel');
 const UserRoleModel = require('./api/models/UserRolesModel');
 const Permission = require('./api/models/UserPermissionModel');
 const UsersModel = require('./api/models/UsersModel');
 
 const bodyParser = require('body-parser');
+
 const notesRoutes = require('./api/routes/NotesRoutes');
 const userRoutes = require('./api/routes/UserRoutes');
 const authRoutes = require('./api/routes/AuthRoutes');
+const rolesRoutes = require('./api/routes/RolesRoutes');
+
 const passportConfig = require('./api/config/passport');
 const passport = require('passport');
 const fileUpload = require('express-fileupload');
 const acl = require('./api/config/acl');
+
+const Logger = require('./api/utils/Logger');
 
 app = express();
 port = process.env.PORT || 3000;
@@ -47,7 +53,7 @@ app.use(function (req, res, next) {
 	next();
 });
 
-acl.initialize();
-
-app.listen(port);
-console.log('Server started on port ' + port);
+acl.initialize().then(() => {
+	app.listen(port);
+	Logger.log('Server started on port ' + port);
+});
