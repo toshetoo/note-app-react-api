@@ -50,29 +50,21 @@ module.exports = {
 
     verify: (req, res) => {
         const id = req.params.id;
-        const password = req.body;
+        const data = req.body;
 
         User.findById(id, (err, user) => {
             if (err) {
                 res.send(err);
             }
 
-            // don't verify again
-            if (user.verified) {
-                res.status(400).json({
-                    message: 'Account already verified.'
-                });
-                return;
-            }
-
             user.verified = true;
 
-            // hash the real password password
-            if (password) {
+            // hash the real password
+            if (data.password) {
                 let salt = encryption.generateSalt();
                 user.password = {
                     salt: salt,
-                    hashedPassword: encryption.generateHashedPassword(salt, password)
+                    hashedPassword: encryption.generateHashedPassword(salt, data.password)
                 };
             } else {
                 res.status(400).json({
@@ -134,5 +126,41 @@ module.exports = {
 
     logout: (req, res) => {
 
+    },
+
+    forgotternPassword: (req, res) => {
+        const userData = req.body;
+
+        if (!userData || !userData.email) {
+            res.status(400).json({
+                message: 'Email is required.'
+            });
+            return;
+        }
+
+        User.findOne({
+            email: userData.email
+        }, (err, user) => {
+            if (err) {
+                res.send(err);
+            }
+
+            if (!user) {
+                res.status(400).json({
+                    message: 'No use exist witht this email address'
+                });
+                return;
+            }
+
+            // reset the password of the user
+            let salt = encryption.generateSalt();
+            user.password = {
+                salt: salt,
+                hashedPassword: encryption.generateHashedPassword(salt, guid())
+            };
+
+            MailSender.sendResetPasswordMail(user);
+            res.sendStatus(200);
+        })
     }
 };

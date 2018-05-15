@@ -16,4 +16,7 @@ module.exports = function (app) {
 
     app.route('/auth/verify/:id')
         .post(AuthController.verify);
+
+    app.route('/auth/forgotten-password')
+        .post(AuthController.forgotternPassword);
 };
