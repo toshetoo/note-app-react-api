@@ -6,6 +6,7 @@ const encryption = require('../utils/encryption');
 const MailSender = require('../utils/MailSender');
 const jwt = require('jsonwebtoken');
 const auth = require('../config/passport');
+const guid = require('uuid');
 
 module.exports = {
     register: (req, res) => {
@@ -23,12 +24,12 @@ module.exports = {
                 return;
             }
 
-            // hash the password
+            // hash a default password
             if (userData.password) {
                 let salt = encryption.generateSalt();
                 userData.password = {
                     salt: salt,
-                    hashedPassword: encryption.generateHashedPassword(salt, userData.password)
+                    hashedPassword: encryption.generateHashedPassword(salt, guid())
                 };
             }
 
@@ -49,6 +50,7 @@ module.exports = {
 
     verify: (req, res) => {
         const id = req.params.id;
+        const password = req.body;
 
         User.findById(id, (err, user) => {
             if (err) {
@@ -64,6 +66,19 @@ module.exports = {
             }
 
             user.verified = true;
+
+            // hash the real password password
+            if (password) {
+                let salt = encryption.generateSalt();
+                user.password = {
+                    salt: salt,
+                    hashedPassword: encryption.generateHashedPassword(salt, password)
+                };
+            } else {
+                res.status(400).json({
+                    message: 'Password is missing.'
+                });
+            }
 
             User.update({
                 _id: id
