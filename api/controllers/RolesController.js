@@ -1,4 +1,5 @@
 const Role = require('mongoose').model('Role');
+const User = require('mongoose').model('User');
 
 module.exports = {
     getAll: (req, res) => {
@@ -39,10 +40,10 @@ module.exports = {
         const role = req.body;
 
         Role.findById(id, (err, updatedRole) => {
-            if(err)
+            if (err)
                 res.send(err);
 
-            if(!role.canBeModified) 
+            if (!role.canBeModified)
                 res.status(400).json({
                     message: `Role with id ${id} cannot be modified`
                 });
@@ -50,8 +51,10 @@ module.exports = {
             role.canBeDeleted = updatedRole.canBeDeleted;
             role.canBeModified = updatedRole.canBeModified;
 
-            Role.update({_id: id}, role, (err, r) => {
-                if(err)
+            Role.update({
+                _id: id
+            }, role, (err, r) => {
+                if (err)
                     res.send(err);
 
                 res.sendStatus(200);
@@ -62,19 +65,46 @@ module.exports = {
     deleteRole: (req, res) => {
         const id = req.params.id;
         Role.findById(id, (err, updatedRole) => {
-            if(err)
+            if (err)
                 res.send(err);
 
-            if(!role.canBeDeleted) 
+            if (!role.canBeDeleted)
                 res.status(400).json({
                     message: `Role with id ${id} cannot be deleted`
-                });            
+                });
 
-            Role.deleteOne({_id: id}, (err, r) => {
-                if(err)
+            // check if role is referenced in any user
+            User.find({
+                roles: {
+                    $elemMatch: id
+                }
+            }, (err, users) => {
+                if (err) {
                     res.send(err);
+                }
 
-                res.sendStatus(200);
+                const promises = [];
+                if (users.length > 0) {
+                    users.forEach(u => {
+                        const index = u.roles.findIndex(r => r === id);
+                        u.roles.splice(index, 1);
+
+                        promises.push(User.update({
+                            _id: u.id
+                        }, u));
+                    });
+                }
+
+                Promise.all(promises).then(() => {
+                    Role.deleteOne({
+                        _id: id
+                    }, (err, r) => {
+                        if (err)
+                            res.send(err);
+
+                        res.sendStatus(200);
+                    });
+                });
             });
         });
     }
