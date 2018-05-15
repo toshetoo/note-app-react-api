@@ -4,7 +4,10 @@ const Role = mongoose.model('Role');
 
 module.exports = {
     getAll: (req, res) => {
-        User.find({}, (error, users) => {
+        User.find({}, {
+            password: 0,
+            verified: 0
+        }, (error, users) => {
             if (error)
                 res.send(error);
 
@@ -17,6 +20,9 @@ module.exports = {
         const value = req.params[prop];
         User.findOne({
             prop: value
+        }, {
+            password: 0,
+            verified: 0
         }, (error, user) => {
             if (error)
                 res.send(error);
@@ -121,7 +127,9 @@ module.exports = {
 
                 user.roles.push(data.roleId);
 
-                User.update({ _id: user.id }, user, (err, user) => {
+                User.update({
+                    _id: user.id
+                }, user, (err, user) => {
                     if (err)
                         res.send(err);
 
@@ -163,7 +171,9 @@ module.exports = {
                 const index = user.roles.findIndex(r => r.id === data.id);
                 user.roles.splice(index, 1);
 
-                User.update({ _id: user.id }, user, (err, user) => {
+                User.update({
+                    _id: user.id
+                }, user, (err, user) => {
                     if (err)
                         res.send(err);
 
