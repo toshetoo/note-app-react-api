@@ -16,11 +16,7 @@ module.exports = {
     },
 
     getByProp: (req, res) => {
-        const prop = Object.keys(req.params);
-        const value = req.params[prop];
-        User.findOne({
-            prop: value
-        }, {
+        User.find(req.query, {
             password: 0,
             verified: 0
         }, (error, user) => {

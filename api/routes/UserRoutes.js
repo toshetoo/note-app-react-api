@@ -11,10 +11,12 @@ module.exports = function (app) {
             session: false
         }), acl.canAccess('getAll', controllerName), UsersController.getAll);
 
-    app.route('/users/:id')
+    app.route('/users/getByProp')
         .get(passport.authenticate('jwt', {
             session: false
         }), acl.canAccess('getByProp', controllerName), UsersController.getByProp)
+
+    app.route('/users/:id')
         .put(passport.authenticate('jwt', {
             session: false
         }), acl.canAccess('updateUser', controllerName), UsersController.updateUser)

@@ -20,7 +20,7 @@ module.exports = {
             if (error)
                 res.send(error);
 
-            res.json(note[0]);
+            res.json(note);
         });
     },
 
