@@ -18,6 +18,10 @@ let NoteSchema = new Schema({
     lastEdit: {
         type: Date, 
         default: null
+    },
+    authorId: {
+        type: Schema.Types.ObjectId,
+        required: 'Author required'
     }
 });
 
