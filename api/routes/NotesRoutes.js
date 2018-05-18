@@ -24,4 +24,9 @@ module.exports = function (app) {
         .delete(passport.authenticate('jwt', {
             session: false
         }), acl.canAccess('deleteNote', controllerName), NotesController.deleteNote);
+
+    app.route('/notes/getByAuthorId/:id')
+        .get(passport.authenticate('jwt', {
+            session: false
+        }), acl.canAccess('getByAuthorId', controllerName), NotesController.getByAuthorId)
 }

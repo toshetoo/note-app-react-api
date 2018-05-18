@@ -24,8 +24,19 @@ module.exports = {
         });
     },
 
+    getByAuthorId: (req, res) => {
+        const id = req.params.id;
+        Note.find({authorId: id}, (err, notes) => {
+            if(err)
+                res.send(err);
+
+            res.json(notes);
+        });
+    },
+
     saveNote: (req, res) => {
         let note = req.body;
+        note.authorId = req.user.id;
         Note.create(note).then(() => {
             res.sendStatus(200);
         });
@@ -63,12 +74,17 @@ module.exports.config = {
     getAll: {
         displayName: "Get all notes",
         description: "Can see all notes",
-        forUser: true
     },
 
     getById: {
         displayName: "Get a single note",
         description: "Get a single note by its id",
+        forUser: true
+    },
+
+    getByAuthorId: {
+        displayName: "Get note by author",
+        description: "Get a all notes for a user",
         forUser: true
     },
 

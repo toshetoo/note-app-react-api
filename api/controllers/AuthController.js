@@ -36,14 +36,25 @@ module.exports = {
             // even if the user passes the verified flag, override it to false
             userData.verified = false;
 
-            //try to create the user
-            User.create(userData).then((user) => {
-                // send verification mail
-                MailSender.sendRegistrationMail(user);
+            // assign user role
+            Role.findOne({
+                name: 'User'
+            }, (err, role) => {
+                if (!userData.roles) {
+                    userData.roles = [];
+                }
 
-                res.sendStatus(200);
-            }, (err) => {
-                res.send(err);
+                userData.roles.push(role._id);
+
+                //try to create the user
+                User.create(userData).then((user) => {
+                    // send verification mail
+                    MailSender.sendRegistrationMail(user);
+
+                    res.sendStatus(200);
+                }, (err) => {
+                    res.send(err);
+                });
             });
         });
     },
