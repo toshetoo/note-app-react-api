@@ -19,7 +19,7 @@ module.exports = {
             to: user.email,
             subject: 'Registration completed!',
             text: `
-                In order to verify your email, click on the following link: https://personal-notes-api.herokuapp.com/auth/verify/${user.id}
+                In order to verify your email, click on the following link: https://personal-notes-app.herokuapp.com/auth/verify/${user.id}
             `
         };
 
