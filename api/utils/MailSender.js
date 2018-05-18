@@ -46,7 +46,7 @@ module.exports = {
             subject: 'Forgotten password',
             text: `
                 Someone requested a new password for your account. Your password has been reset. 
-                In order to change it, click on the following link: https://personal-notes-api.herokuapp.com/auth/verify/${user.id}
+                In order to change it, click on the following link: https://personal-notes-app.herokuapp.com/auth/verify/${user.id}
             `
         };
 
