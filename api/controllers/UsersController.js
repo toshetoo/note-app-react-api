@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const Role = mongoose.model('Role');
+const cloudinary = require('cloudinary');
+const Logger = require('../utils/Logger');
+const fs = require('fs');
 
 module.exports = {
     getAll: (req, res) => {
@@ -60,40 +63,23 @@ module.exports = {
     },
 
     uploadImage: (req, res) => {
-        const userId = req.params.id;
+        const file = req.files.file;
+        let path = __dirname + '/temp/images/' + file.name;
+        file.mv(path, (err) => {
+            if(err){
+                Logger.log(err);
+            }
 
-        if (!req.files)
-            return res.status(400).json({
-                message: 'No files were uploaded.'
-            });
+            cloudinary.uploader.upload(path).then((result) => {
+                Logger.log(JSON.stringify(result));
 
-        User.findById(userId, (err, user) => {
-            if (err)
-                return res.status(400).json({
-                    message: 'User does not exist'
+                fs.unlink(path, () => {
+                    Logger.log(file.name + " deleted.");
                 });
 
-            const userFile = req.files.userImage;
-
-            userFile.mv('../data/images', (err) => {
-                if (err)
-                    return res.status(500).send(err);
-
-                user.image = {
-                    title: userFile.name,
-                    url: `../data/images/${userFile.name}`
-                }
-
-                User.update({
-                    _id: id
-                }, user, (err, updatedUser) => {
-                    if (err)
-                        res.send(err);
-
-                    res.sendStatus(200);
-                });
+                res.status(200).send({title: result.original_filename, url: result.secure_url});
             });
-        });
+        });       
     },
 
     assignRole: (req, res) => {
