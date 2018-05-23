@@ -65,6 +65,12 @@ module.exports = {
     uploadImage: (req, res) => {
         const file = req.files.file;
         let path = __dirname + '/temp/images/' + file.name;
+
+        if(!fs.existsSync(__dirname + '/temp/images')) {
+            fs.mkdirSync(__dirname + '/temp');
+            fs.mkdirSync(__dirname + '/temp/images');
+        }
+
         file.mv(path, (err) => {
             if(err){
                 Logger.log(err);
